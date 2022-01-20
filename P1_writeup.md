@@ -31,8 +31,7 @@ Canny edge detection is used to determine edges by computing gradients on a gray
 Once the edges of the image are obtained, the search space is contained using a trapezoidal (polygon) approach to narrow down the area in which the lanes will be located. This will help us localize the search for the lane lines and reduce interference. 
 
 #### e. Line detection, classification and fitting
-
-In order to draw a single line on the left and right lanes, the draw_lines() function was modified by calculating the slope of the edges to differentiate between the left and right lines. Based on the side, a line of best fit was determined with use of the RANSACRegressor function. This facilitated the removal of any anomalies in the dataset of points, and linear regression was used to map the inliers to the line of best fit. This line was then extrapolated accordingly, for either lane side, and the lanes lines were then drawn.
+cv2.HoughLinesP is used to obtain coordinates of the line in the hough space. Strong support fora line in image space maps to where many lines intersect in hough space. These values are then used to draw the full lane lines. In order to draw a single line on the left and right lanes, the draw_lines() function was modified by calculating the slope of the edges to differentiate between the left and right lines. Based on the side, a line of best fit was determined with use of the RANSACRegressor function. This facilitated the removal of any anomalies/outliers in the dataset of points, and linear regression was used to map the inliers to the line of best fit. This line was then extrapolated accordingly, for either lane side, and the lanes lines were then drawn. A sample output of the full hough lines is shown below:
 
 <img src = "./test_images_output/hough_solidWhiteCurve.jpg" height="50%" width="50%" /> 
 
@@ -45,14 +44,12 @@ The final output image overlays the original image with the lane lines drawn. Ex
 
 ### 2. Identify potential shortcomings with your current pipeline
 
+Although the pipeline was effective in finding the lanes for the images and the straight roads with white and yellow lines, one shortcoming that was observed was when applied to roads with curves, the line fitting was not accurate. 
 
-One potential shortcoming would be what would happen when ... 
-
-Another shortcoming could be ...
-
+Another potential shortcoming would be what would happen when the lighting conditions of the road change such as at night. This would affect the color filters being applied and may result in some missing line information. It is also possible for the lines to be missed under conditions where a large vehicle conducts a lane switch infront of the camera and obstructs the full path of the line. This would make it harder to predict the direction and orientation of the lines. 
 
 ### 3. Suggest possible improvements to your pipeline
 
-A possible improvement would be to ...
+A possible improvement would be to line size by finding a more accurate region of interest. The trappezoidal shape works for this road condition but a higher degree shape could be more fitting. 
 
-Another potential improvement could be to ...
+Another potential improvement could be to utilize and adaptive model for linear regression. This would adapt the parameters based on the input region and can also be used with locally weighted models. A DNN would also be effective in improving the performance of the pipeline. 
